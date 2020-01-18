@@ -18,8 +18,8 @@ API_KEY = "pk.eyJ1IjoiZ3BmdW5kdDMiLCJhIjoiY2s1aXc5aDUzMGo0ODNrbXNndnlyZHFtNyJ9.Y
 
 
 var myMap = L.map('map', {
-    center: [34, 30],
-    zoom: 2
+    center: [49,-66],
+    zoom: 3
 });
 
 L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
@@ -30,14 +30,16 @@ L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={
 }).addTo(myMap);
 
 d3.json(url, function(data){
-    console.log(data)
+    buildMap(data)
 
+function buildMap(data){
     L.geoJSON(data, {
         style: function (feature) {
             return {color: feature.properties.mag};
         }
     }).bindPopup(function (layer) {
+        console.log(layer.feature.properties.mag)
         return layer.feature.properties.mag;
     }).addTo(myMap);
-
+};
 });
