@@ -1,25 +1,10 @@
-// Create a map using Leaflet that plots all of the earthquakes from your data set 
-// based on their longitude and latitude.
-
-// * Your data markers should reflect the magnitude of the earthquake in their size 
-// and color. Earthquakes with higher magnitudes should appear larger and darker in 
-// color.
-
-// * Include popups that provide additional information about the earthquake when a 
-// marker is clicked.
-
-// * Create a legend that will provide context for your map data.
-
-// * Your visualization should look something like the map above.
-
 
 url = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson'
 API_KEY = "pk.eyJ1IjoiZ3BmdW5kdDMiLCJhIjoiY2s1aXc5aDUzMGo0ODNrbXNndnlyZHFtNyJ9.YWGks_INxxA82dgB6gRLoA";
 
-
 var myMap = L.map('map', {
     center: [49,-66],
-    zoom: 3
+    zoom: 1.6
 });
 
 L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
@@ -30,16 +15,37 @@ L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={
 }).addTo(myMap);
 
 d3.json(url, function(data){
-    buildMap(data)
-
-function buildMap(data){
     L.geoJSON(data, {
-        style: function (feature) {
-            return {color: feature.properties.mag};
+        pointToLayer: function(feature, latlng) {
+        var color = "";
+        if (Math.floor(feature.properties.mag) < 1) {
+            color = "#90ee90"; //light green
         }
-    }).bindPopup(function (layer) {
-        console.log(layer.feature.properties.mag)
-        return layer.feature.properties.mag;
-    }).addTo(myMap);
-};
+        else if (Math.floor(feature.properties.mag) < 2) {
+            color = "green";
+        }
+        else if (Math.floor(feature.properties.mag) < 3) {
+            color = "yellow";
+        }
+        else if (Math.floor(feature.properties.mag) < 4) {
+            color = "orange";
+        }
+        else if (Math.floor(feature.properties.mag) < 5) {
+            color = "red";
+        }
+        else if (Math.floor(feature.properties.mag) < 6) {
+            color = "#5c0003"; //dark red
+        }
+
+        var circles = {
+            radius: feature.properties.mag,
+            color: color,
+            weight: feature.properties.mag *5,
+            opacity: 1,
+            fillOpacity: .8}
+            console.log(circles)
+            return L.circleMarker(latlng, circles) 
+            }
+
+        }).addTo(myMap)
 });
